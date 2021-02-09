@@ -1,3 +1,8 @@
+docker/
+*.zip
+start_dev.bat
+start_dev_linux.sh
+
 # Binaries for programs and plugins
 *.exe
 *.exe~
