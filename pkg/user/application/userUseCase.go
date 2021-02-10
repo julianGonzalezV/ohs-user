@@ -2,42 +2,42 @@ package application
 
 import (
 	"context"
-	"ms-asset/pkg/asset/domain/entity"
-	"ms-asset/pkg/asset/domain/service"
-	"ms-asset/pkg/asset/infrastructure/request"
+	"ohs-user/pkg/user/domain/entity"
+	"ohs-user/pkg/user/domain/service"
+	"ohs-user/pkg/user/infrastructure/request"
 )
 
 // UserUseCaseInterface provides operations to be executed.
 type UserUseCaseInterface interface {
-	Add(ctx context.Context, requestData request.AssetRequest) error
-	GetByClient(ctx context.Context, clientId string) ([]*entity.Asset, error)
-	Get(ctx context.Context, sku string) (*entity.Asset, error)
+	SignUp(ctx context.Context, requestData request.UserRequest) error
+	SignIn(ctx context.Context, clientId string) ([]*entity.User, error)
+	ChangePassword(ctx context.Context, sku string) (*entity.User, error)
 }
 
-type assetUseCase struct {
-	service service.AssetServiceInterface
+type userUseCase struct {
+	service service.UserServiceInterface
 }
 
 // NewBusinessApp creates the business application from App Layer
-func New(service service.AssetServiceInterface) UserUseCaseInterface {
-	return &assetUseCase{service}
+func New(service service.UserServiceInterface) UserUseCaseInterface {
+	return &userUseCase{service}
 }
 
 // Add adds the given record to storage
-func (app *assetUseCase) Add(ctx context.Context, requestData request.AssetRequest) error {
+func (app *userUseCase) SignUp(ctx context.Context, requestData request.UserRequest) error {
 	b := entity.New(itemsRequestToDomain(requestData.Items), requestData.Price, requestData.BusinessId, requestData.Sku, requestData.Name,
 		requestData.Description, requestData.Category, requestData.State, requestData.ProductType, requestData.Image)
-	return app.service.Add(ctx, b)
+	return app.service.Create(ctx, b)
 
 }
 
 // GetByClient searches all records into the storage
-func (app *assetUseCase) GetByClient(ctx context.Context, businessId string) ([]*entity.Asset, error) {
-	return app.service.GetByClient(ctx, businessId)
+func (app *userUseCase) SignIn(ctx context.Context, businessId string) ([]*entity.User, error) {
+	return app.service.GetSession(ctx, businessId)
 }
 
 // Get searches all records into the storage
-func (app *assetUseCase) Get(ctx context.Context, sku string) (*entity.Asset, error) {
+func (app *userUseCase) ChangePassword(ctx context.Context, sku string) (*entity.User, error) {
 	return app.service.Get(ctx, sku)
 }
 

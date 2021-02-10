@@ -6,14 +6,10 @@ import (
 	"fmt"
 	"log"
 
-	assetUseCase "ms-asset/pkg/asset/application"
-	assetRepository "ms-asset/pkg/asset/domain/repository"
-	assetService "ms-asset/pkg/asset/domain/service"
-	assetRepositoryImpl "ms-asset/pkg/asset/infrastructure/repositoryimpl"
-	assetRoute "ms-asset/pkg/asset/infrastructure/rest"
+	userRepository "ohs-user/pkg/user/domain/repository"
 
-	"ms-asset/shared/server"
-	"ms-asset/shared/storageconn"
+	"ohs-user/shared/server"
+	"ohs-user/shared/storageconn"
 
 	"net/http"
 	"os"
@@ -23,7 +19,7 @@ import (
 )
 
 /// initializeRepo returns a repository based on database type name
-func initializeRepo(database *string) assetRepository.AssetRepository {
+func initializeRepo(database *string) userRepository.UserRepository {
 	switch *database {
 	case "mongo":
 		return newMongoRepository()
@@ -33,10 +29,10 @@ func initializeRepo(database *string) assetRepository.AssetRepository {
 }
 
 /// newMongoRepository returns the mongoDB implementation
-func newMongoRepository() assetRepository.AssetRepository {
+func newMongoRepository() userManagerDependy.UserManagement {
 	mongoAddr := os.Getenv("DATABASE_CONN")
 	client := storageconn.Connect(mongoAddr)
-	return assetRepositoryImpl.New(client)
+	return userRepositoryImpl.New(client)
 }
 
 func ClientHandler() {
@@ -50,14 +46,14 @@ func ClientHandler() {
 	database := flag.String("database", dbDriver, "initialize the api using the given db engine")
 
 	// Injecting services and repos to Application Layer
-	assetR := initializeRepo(database)
-	assetUseCase := assetUseCase.New(assetService.New(assetR))
+	userR := initializeRepo(database)
+	userUseCase := userUseCase.New(userService.New(userR))
 
 	httpAddr := fmt.Sprintf("%s:%d", *host, *port)
 
 	// Injecting server configuration
-	assetRoute := assetRoute.New(assetUseCase)
-	server := server.New(assetRoute)
+	userRoute := userRoute.New(userUseCase)
+	server := server.New(userRoute)
 
 	// Next two lines are for AWS Conf
 	http.Handle("/", server.Router())

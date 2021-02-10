@@ -1,4 +1,4 @@
-module ms-asset
+module ohs-user
 
 go 1.14
 

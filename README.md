@@ -1,6 +1,6 @@
-# ms-asset
+# ohs-user
 
-Microservice for  data managing related to assets
+Microservice for  data managing related to user
 
 # Instalation
 In your local host you have to create the next folders structrure:
@@ -40,7 +40,7 @@ Process
 - Into your root project folder execute:
 1) $ go get github.com/aws/aws-lambda-go/lambda   (if required)
 2) $ GOOS=linux go build main.go --> this command create an executable file called main as the .go name file
-3) $ zip ms-asset.zip main
+3) $ zip ohs-user.zip main
 4) $ upload zip to S3 via aws cli or manually
 - Nota: Para proyectos desde cero es mejor hacerlo con la lib de aws 
 pero en existentes se pueden usar wrappers como: (para este proyecto se usó apexGateway, ya que contabamos con una arquitectura ya hecha)

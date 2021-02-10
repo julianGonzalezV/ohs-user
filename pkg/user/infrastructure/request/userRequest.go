@@ -1,6 +1,6 @@
 package request
 
-type AssetRequest struct {
+type UserRequest struct {
 	BusinessId  string        `json:"businessId"`
 	Sku         string        `json:"sku"`
 	Image       string        `json:"image"`

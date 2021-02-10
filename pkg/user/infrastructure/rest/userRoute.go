@@ -3,43 +3,43 @@ package rest
 import (
 	"encoding/json"
 	"log"
-	"ms-asset/pkg/asset/application"
-	"ms-asset/pkg/asset/infrastructure/request"
 	"net/http"
+	"ohs-user/pkg/user/application"
+	"ohs-user/pkg/user/infrastructure/request"
 
 	"github.com/gorilla/mux"
 )
 
 var (
-	assetApp application.AssetUseCaseInterface
+	userApp application.UserUseCaseInterface
 )
 
-type AssetRoute interface {
+type UserRoute interface {
 	AddRoutes(router *mux.Router)
 }
 
-type assetRoute struct {
-	app application.AssetUseCaseInterface
+type userRoute struct {
+	app application.UserUseCaseInterface
 }
 
 // New ...
 func New(
-	app application.AssetUseCaseInterface,
-) AssetRoute {
-	assetApp = app
-	return &assetRoute{app: assetApp}
+	app application.UserUseCaseInterface,
+) UserRoute {
+	userApp = app
+	return &userRoute{app: userApp}
 }
 
-func (pRoute *assetRoute) AddRoutes(router *mux.Router) {
-	router.HandleFunc("/assets", add).Methods(http.MethodPost)
-	router.HandleFunc("/assets/client/{clientId:[0-9-\\d]+}", searchByClient).Methods(http.MethodGet)
-	router.HandleFunc("/assets/{sku:[0-9-\\d]+}", search).Methods(http.MethodGet)
+func (pRoute *userRoute) AddRoutes(router *mux.Router) {
+	router.HandleFunc("/user", add).Methods(http.MethodPost)
+	router.HandleFunc("/user/client/{clientId:[0-9-\\d]+}", searchByClient).Methods(http.MethodGet)
+	router.HandleFunc("/user/{sku:[0-9-\\d]+}", search).Methods(http.MethodGet)
 
 }
 
 func add(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
-	var cl request.AssetRequest
+	var cl request.UserRequest
 	err := decoder.Decode(&cl)
 
 	w.Header().Set("Content-Type", "application/json")
@@ -50,7 +50,7 @@ func add(w http.ResponseWriter, r *http.Request) {
 	}
 	//	AddProduct(ctx context.Context, requestData request.ProductRequest) error
 
-	if err := assetApp.Add(r.Context(), cl); err != nil {
+	if err := userApp.SignUp(r.Context(), cl); err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		_ = json.NewEncoder(w).Encode("Can't create the record")
@@ -62,7 +62,7 @@ func add(w http.ResponseWriter, r *http.Request) {
 func searchByClient(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	w.Header().Set("Content-Type", "application/json")
-	if result, error := assetApp.GetByClient(r.Context(), vars["businessId"]); error != nil {
+	if result, error := userApp.SignIn(r.Context(), vars["businessId"]); error != nil {
 		log.Println(error)
 		w.WriteHeader(http.StatusInternalServerError)
 		_ = json.NewEncoder(w).Encode("Business not found")
@@ -76,7 +76,7 @@ func searchByClient(w http.ResponseWriter, r *http.Request) {
 func search(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	w.Header().Set("Content-Type", "application/json")
-	if result, error := assetApp.Get(r.Context(), vars["sku"]); error != nil {
+	if result, error := userApp.ChangePassword(r.Context(), vars["sku"]); error != nil {
 		log.Println(error)
 		w.WriteHeader(http.StatusInternalServerError)
 		_ = json.NewEncoder(w).Encode("Record not found")

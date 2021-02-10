@@ -1,8 +1,8 @@
 package entity
 
 // New function is used to create a new struct
-func New(items []Item, price float64, businessId, sku, name, description, category, state, productType, image string) *Asset {
-	return &Asset{
+func New(items []Item, price float64, businessId, sku, name, description, category, state, productType, image string) *User {
+	return &User{
 		BusinessId:  businessId,
 		Sku:         sku,
 		Image:       image,
@@ -16,7 +16,7 @@ func New(items []Item, price float64, businessId, sku, name, description, catego
 	}
 }
 
-type Asset struct {
+type User struct {
 	BusinessId  string  `json:"businessId"`
 	Sku         string  `json:"sku"`
 	Image       string  `json:"image"`

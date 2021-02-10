@@ -1,8 +1,8 @@
 package server
 
 import (
-	aRoute "ms-asset/pkg/asset/infrastructure/rest"
 	"net/http"
+	uRoute "ohs-user/pkg/user/infrastructure/rest"
 
 	"github.com/gorilla/mux"
 )
@@ -17,10 +17,10 @@ type Server interface {
 }
 
 // New ...
-func New(asset aRoute.AssetRoute) Server {
+func New(userRt uRoute.UserRoute) Server {
 	api := &Api{}
 	r := mux.NewRouter()
-	asset.AddRoutes(r)
+	userRt.AddRoutes(r)
 	api.router = r
 	return api
 }
