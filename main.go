@@ -6,10 +6,9 @@ import (
 	"fmt"
 	"log"
 
-	userRepository "ohs-user/pkg/user/domain/repository"
+	"ohs-user/pkg/user/infrastructure/usermanagerimpl"
 
 	"ohs-user/shared/server"
-	"ohs-user/shared/storageconn"
 
 	"net/http"
 	"os"
@@ -18,23 +17,7 @@ import (
 	"github.com/apex/gateway"
 )
 
-/// initializeRepo returns a repository based on database type name
-func initializeRepo(database *string) userRepository.UserRepository {
-	switch *database {
-	case "mongo":
-		return newMongoRepository()
-	default:
-		return nil // we can have several implementation like in memory, postgress etc
-	}
-}
-
-/// newMongoRepository returns the mongoDB implementation
-func newMongoRepository() userManagerDependy.UserManagement {
-	mongoAddr := os.Getenv("DATABASE_CONN")
-	client := storageconn.Connect(mongoAddr)
-	return userRepositoryImpl.New(client)
-}
-
+// ClientHandler set up all dependencies
 func ClientHandler() {
 	var (
 		defaultHost    = os.Getenv("CLIENTAPI_SERVER_HOST")
@@ -46,8 +29,7 @@ func ClientHandler() {
 	database := flag.String("database", dbDriver, "initialize the api using the given db engine")
 
 	// Injecting services and repos to Application Layer
-	userR := initializeRepo(database)
-	userUseCase := userUseCase.New(userService.New(userR))
+	userUseCase := userUseCase.New(userService.New(usermanagerimpl.New()))
 
 	httpAddr := fmt.Sprintf("%s:%d", *host, *port)
 
