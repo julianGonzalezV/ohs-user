@@ -6,6 +6,9 @@ import (
 	"fmt"
 	"log"
 
+	"ohs-user/pkg/user/application"
+	"ohs-user/pkg/user/domain/service"
+	"ohs-user/pkg/user/infrastructure/rest"
 	"ohs-user/pkg/user/infrastructure/usermanagerimpl"
 
 	"ohs-user/shared/server"
@@ -22,19 +25,17 @@ func ClientHandler() {
 	var (
 		defaultHost    = os.Getenv("CLIENTAPI_SERVER_HOST")
 		defaultPort, _ = strconv.Atoi(os.Getenv("CLIENTAPI_SERVER_PORT"))
-		dbDriver       = os.Getenv("DATABASE_DRIVER")
 	)
 	host := flag.String("host", defaultHost, "define host of the server")
 	port := flag.Int("port", defaultPort, "define port of the server")
-	database := flag.String("database", dbDriver, "initialize the api using the given db engine")
 
 	// Injecting services and repos to Application Layer
-	userUseCase := userUseCase.New(userService.New(usermanagerimpl.New()))
+	userUseCase := application.New(service.New(usermanagerimpl.New()))
 
 	httpAddr := fmt.Sprintf("%s:%d", *host, *port)
 
 	// Injecting server configuration
-	userRoute := userRoute.New(userUseCase)
+	userRoute := rest.New(userUseCase)
 	server := server.New(userRoute)
 
 	// Next two lines are for AWS Conf

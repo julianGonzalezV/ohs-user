@@ -10,15 +10,15 @@ import (
 // UserUseCaseInterface provides operations to be executed.
 type UserUseCaseInterface interface {
 	SignUp(ctx context.Context, requestData request.UserRequest) error
-	SignIn(ctx context.Context, clientId string) ([]*entity.User, error)
-	ChangePassword(ctx context.Context, sku string) (*entity.User, error)
+	SignIn(ctx context.Context, clientID string) (*entity.User, error)
+	ChangePassword(ctx context.Context, sku string) ([]*entity.User, error)
 }
 
 type userUseCase struct {
 	service service.UserServiceInterface
 }
 
-// NewBusinessApp creates the business application from App Layer
+// New creates the  application from Application Layer
 func New(service service.UserServiceInterface) UserUseCaseInterface {
 	return &userUseCase{service}
 }
@@ -32,13 +32,13 @@ func (app *userUseCase) SignUp(ctx context.Context, requestData request.UserRequ
 }
 
 // GetByClient searches all records into the storage
-func (app *userUseCase) SignIn(ctx context.Context, businessId string) ([]*entity.User, error) {
-	return app.service.GetSession(ctx, businessId)
+func (app *userUseCase) SignIn(ctx context.Context, businessID string) (*entity.User, error) {
+	return app.service.GetSession(ctx, businessID)
 }
 
 // Get searches all records into the storage
-func (app *userUseCase) ChangePassword(ctx context.Context, sku string) (*entity.User, error) {
-	return app.service.Get(ctx, sku)
+func (app *userUseCase) ChangePassword(ctx context.Context, sku string) ([]*entity.User, error) {
+	return app.service.ChangePassword(ctx, sku)
 }
 
 func itemsRequestToDomain(items []request.ItemRequest) []entity.Item {
